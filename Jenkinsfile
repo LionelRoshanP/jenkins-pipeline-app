@@ -2,21 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Clone Repository') {
             steps {
-                echo '✅ Building the application...'
+                git 'https://github.com/LionelRoshanP/jenkins-pipeline-app.git'
             }
         }
-
-        stage('Deploy') {
+        stage('Install Dependencies') {
             steps {
-                sh 'nohup python3 app.py &'
+                bat 'pip install -r requirements.txt'
             }
         }
-
-        stage('Ping') {
+        stage('Start Web App') {
             steps {
-                sh './ping.sh'
+                bat 'start /B python app.py'
+                sleep 5
+            }
+        }
+        stage('Ping App') {
+            steps {
+                bat 'curl -I http://localhost:5000'
             }
         }
     }
